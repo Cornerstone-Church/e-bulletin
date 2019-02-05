@@ -256,7 +256,7 @@ a:hover .overlay {
 .image-button {
     display: block;
     position: relative;
-    height: 200px;
+    height: 100%;
     width: 100%;
     overflow: hidden;
 }
@@ -283,3 +283,8 @@ a:hover .overlay {
     color: white;
 }
 
+.tripple-layout {
+    position: relative;
+    display: block;
+    height: 33.4vh;
+}
