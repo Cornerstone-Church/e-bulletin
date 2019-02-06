@@ -247,7 +247,7 @@ a:hover .overlay {
 }
 
 .date {
-    margin-left: 20px;
+    text-align: center;
     font-weight: bold;
 }
 
@@ -285,4 +285,8 @@ a:hover .overlay {
     position: relative;
     display: block;
     height: 33.4vh;
+}
+
+#announcment-section h2 {
+    text-align: center;
 }
