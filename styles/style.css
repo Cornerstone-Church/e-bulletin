@@ -13,6 +13,14 @@ body {
     padding: 0;
 
     font-family: 'Open Sans', sans-serif;
+
+}
+
+#mobile-wrapper {
+    position: absolute;
+    bottom: 0px;
+    overflow: hidden;
+    height: 92vh;
 }
 
 ul {
@@ -53,7 +61,7 @@ li p {
 
 
 #portal {
-    height: 99.4vh;
+    height: 100%;
     width: 100vw;
 
     margin: 0px;
@@ -284,7 +292,7 @@ a:hover .overlay {
 .tripple-layout {
     position: relative;
     display: block;
-    height: 33.4vh;
+    height: 30.6vh;
 }
 
 #announcment-section h2 {
