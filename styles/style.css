@@ -1,6 +1,21 @@
 @import url('https://fonts.googleapis.com/css?family=Raleway:900');
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
+
+/* iOS Only CSS code */
+@supports (-webkit-overflow-scrolling: touch) {
+    #mobile-wrapper {
+        height: 88vh;
+    }
+}
+
+/* Other OS code */
+@supports not (-webkit-overflow-scrolling: touch) {
+    #mobile-wrapper {
+        height: 92vh;
+    }
+}
+
 :root {
     --theme-primary-color: #222f3e;
 }
@@ -20,7 +35,8 @@ body {
     position: absolute;
     bottom: 0px;
     overflow: hidden;
-    height: 92vh;
+    /* Height is managed in the @supports section */
+    /* height: 88vh; */
 }
 
 ul {
