@@ -1,5 +1,5 @@
 # PERMISSIONS
-## Home Page
+## Entire Project
 ### Owner: Silent Sonata
 ### Maintainer: Silent Sonata
 
