@@ -192,7 +192,7 @@ a:hover .overlay {
     padding: 0;
     width: 100%;
 
-    font-size: 35px;
+    font-size: 30px;
     
     text-align: center;
     color: #222f3e;
@@ -229,7 +229,7 @@ a:hover .overlay {
 
 .content h1 {
     text-transform: uppercase;
-    font-size: 25px;
+    font-size: 22px;
 }
 
 .location {
