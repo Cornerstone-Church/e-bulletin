@@ -312,7 +312,17 @@ a:hover .overlay {
     text-align: center;
 }
 
+#announcment-section p {
+    text-indent: 0px;
+}
+
 .no-events {
     color: var(--theme-primary-color);
     text-align: center;
+}
+
+#javascript-error {
+    text-align: center;
+    padding: 40px;
+    font-style: italic;
 }
