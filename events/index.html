@@ -6,16 +6,41 @@
     <title>This week at Cornerstone</title>
     <link rel="stylesheet" href="/styles/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-134329219-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-134329219-1');
+    </script>
+
+
 </head>
 
-<body>
+<body onload="checkDay()">
     <section id="this-week">
         <div class="banner">
             <img src="/ref/portal_images/events.jpg">
             <h1>Happening Now</h1>
         </div>
-        <div class="content">
+
+        <!-- No Events -->
+        <div id="no-event-hn" class="content hn-element">
             <ul>
+                <!-- Main Service -->
+                <li>
+                    <h1 class="no-events">No Events Today</h1>
+                </li>
+            </ul>
+        </div>
+
+        <!-- SATURDAY NIGHT SERVICE -->
+        <div id="saturday-hn" class="content hn-element">
+            <ul>
+                <!-- Main Service -->
                 <li>
                     <img class="background-image" src="/ref/events_page/sanctuary.jpg">
                     <div class="overlay">
@@ -29,6 +54,7 @@
                         </div>
                     </div>
                 </li>
+                <!-- Cafe -->
                 <li>
                     <img class="background-image" src="/ref/events_page/food.jpg">
                     <div class="overlay">
@@ -43,21 +69,71 @@
                         </div>
                     </div>
                 </li>
+                <!-- Prayer -->
                 <li>
                     <img class="background-image" src="/ref/events_page/prayer.jpg">
                     <div class="overlay">
-                        <h1>Saturday Prayer</h1>
+                        <h1>Prayer</h1>
                         <div class="location">
                             <img class="location--icon" src="/ref/icons/location.png">
                             <h2 class="location--description">Sanctuary</h2>
                         </div>
                         <div class="time">
-                            7:00pm
+                            6:15pm
                         </div>
                     </div>
                 </li>
             </ul>
         </div>
+
+        <!-- SUNDAY MORNING SERVICE -->
+        <div id="sunday-hn" class="content hn-element">
+            <ul>
+                <li>
+                    <!-- Main Service -->
+                    <img class="background-image" src="/ref/events_page/sanctuary.jpg">
+                    <div class="overlay">
+                        <h1>Main Service</h1>
+                        <div class="location">
+                            <img class="location--icon" src="/ref/icons/location.png">
+                            <h2 class="location--description">Sanctuary</h2>
+                        </div>
+                        <div class="time">
+                            9:00am | 11:00am
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <!-- Kids Alive -->
+                    <img class="background-image" src="/ref/events_page/alive_kids.jpg">
+                    <div class="overlay">
+                        <h1>Kids Alive</h1>
+                        <div class="location">
+                            <img class="location--icon" src="/ref/icons/location.png">
+                            <h2 class="location--description">Multipurpose Room</h2>
+                        </div>
+                        <div class="time">
+                            9:00am | 11:00am
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <!-- Fusion Youth -->
+                    <img class="background-image" src="/ref/events_page/fusion_youth.jpg">
+                    <div class="overlay">
+                        <h1>Fusion Youth</h1>
+                        <div class="location">
+                            <img class="location--icon" src="/ref/icons/location.png">
+                            <h2 class="location--description">Community Room</h2>
+                        </div>
+                        <div class="time">
+                            9:00am | 11:00am
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
     </section>
     <section id="this-week">
         <div class="banner">
@@ -71,7 +147,8 @@
                     Cornerstone will be taking two trips to New Bern, NC on March 17-23 and
                     March 31-April 6 to help with rebuilding homes that were damaged by
                     Hurricane Florence. Open to men and women. The cost is $100 per person.
-                    If interested in more info, please email George at <a href="mailto:connections@cag.org">connections@cag.org</a>.
+                    If interested in more info, please email George at <a
+                        href="mailto:connections@cag.org">connections@cag.org</a>.
                 </p>
             </li>
             <li>
@@ -87,7 +164,8 @@
                 <h2>Water Baptism</h2>
                 <div class="date">February 24</div>
                 <p>
-                    Take the next step of faith & go deeper with Jesus. <a target="_blank" href="http://cag.org/events">Sign up online</a> and attend the Baptism class on
+                    Take the next step of faith & go deeper with Jesus. <a target="_blank"
+                        href="http://cag.org/events">Sign up online</a> and attend the Baptism class on
                     Saturday, February 16th or Saturday, February 23rd at 5:30pm in Room 105.
                 </p>
             </li>
@@ -98,11 +176,13 @@
                     Join us for an inspirational trip to see “JESUS”, Sight and Sound’s
                     new action-packed musical stage adventure about the most famous person to
                     ever walk the earth & the everyday people whose lives He changed forever.
-                    For more info & to purchase a ticket, visit <a target="_blank" href="http://cag.org/events">cag.org/events</a>.
+                    For more info & to purchase a ticket, visit <a target="_blank"
+                        href="http://cag.org/events">cag.org/events</a>.
                 </p>
             </li>
         </ul>
     </section>
+    <script src="/scripts/happening_now.js"></script>
 </body>
 
 </html>

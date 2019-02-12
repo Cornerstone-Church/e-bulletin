@@ -36,7 +36,6 @@ body {
     bottom: 0px;
     overflow: hidden;
     /* Height is managed in the @supports section */
-    /* height: 88vh; */
 }
 
 ul {
@@ -202,6 +201,10 @@ a:hover .overlay {
     font-family: 'Raleway', sans-serif;
 }
 
+.hn-element {
+    display: none;
+}
+
 .content ul {
     list-style: none;
     padding: 0px;
@@ -306,5 +309,10 @@ a:hover .overlay {
 }
 
 #announcment-section h2 {
+    text-align: center;
+}
+
+.no-events {
+    color: var(--theme-primary-color);
     text-align: center;
 }
