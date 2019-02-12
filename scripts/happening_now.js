@@ -9,6 +9,14 @@ function checkDay() {
     var thrusday = document.getElementById('thursday-hn');
     var friday = document.getElementById('friday-hn');
     var saturday = document.getElementById('saturday-hn');
+    var jsError = document.getElementById('javascript-error');
+
+    // Dissable the error
+    try {
+        jsError.style.display = 'none';
+    } catch (error) {
+        console.log('Unable to load the Javascript Error element: ' + error);
+    }
 
     // Try to set an object to inline if it exists. If the object returns null, catch the error
     // and display the noEvent element.
