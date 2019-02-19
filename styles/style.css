@@ -326,3 +326,13 @@ a:hover .overlay {
     padding: 40px;
     font-style: italic;
 }
+
+.connect-button {
+    border: 3px solid var(--theme-primary-color);
+    margin: 30px 10px;
+    color: var(--theme-primary-color);
+}
+
+.connect-button h2 {
+    margin-top: 30px;
+}
