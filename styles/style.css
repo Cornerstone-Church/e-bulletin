@@ -63,6 +63,11 @@ li p {
     text-indent: 20px;
 }
 
+a {
+    color: var(--theme-primary-color);
+    text-decoration: none;
+}
+
 
 #icon {
     position: absolute;
@@ -335,4 +340,9 @@ a:hover .overlay {
 
 .connect-button h2 {
     margin-top: 30px;
+}
+
+.connect-button a {
+    display: block;
+    height: 100%;
 }
