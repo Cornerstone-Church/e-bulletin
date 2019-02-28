@@ -18,6 +18,7 @@
 
 :root {
     --theme-primary-color: #222f3e;
+    --theme-link-color: #355e8b;
 }
 
 body {
@@ -64,7 +65,7 @@ li p {
 }
 
 a {
-    color: var(--theme-primary-color);
+    color: var(--theme-link-color);
     text-decoration: none;
 }
 
