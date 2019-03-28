@@ -1,0 +1,131 @@
+body {
+    background-image: url('/ref/stock/brown_paper.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+input {
+    -webkit-appearance: none;
+    appearance: none;
+
+    margin: 10px 0px;
+    padding: 15px;
+    width: 80%;
+    border-radius: 0px;
+    border: 2px solid #7f8c8d;
+    background: white;
+    font-size: 14px;
+}
+
+button {
+    margin: 10px 0px;
+    padding: 15px;
+    border-radius: 0px;
+    border: 2px solid #7f8c8d;
+    background: white;
+    font-size: 14px;
+}
+
+#admin-wrapper {
+    position: relative;
+    height: 100vh;
+}
+
+#admin-login {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    height: auto;
+    width: 80%;
+    max-width: 500px;
+    background: white;
+
+    text-align: center;
+}
+
+#admin-login img {
+    margin-top: 40px;
+    width: 200px;
+}
+
+#admin-login h1 {
+    margin-top: 0px;
+    font-size: 25px;
+}
+
+#admin-login input:focus {
+    border-color: #2c3e50;
+    outline: none;
+}
+
+#admin-login button {
+    margin-bottom: 40px;
+    width: 80%;
+}
+
+#admin-login #error-message {
+    color: #e74c3c;
+}
+
+/* Logged in Events */
+#events-footer {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    padding: 10px 0px;
+    background: white;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+#events-footer button {
+    width: 80%;
+    max-width: 400px;
+    font-size: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #7f8c8d;
+    border-width: 3px;
+}
+
+#events-footer #update-status {
+    color: green;
+    margin: 0px;
+}
+
+#events-placeholder {
+    text-align: center;
+}
+
+#events-placeholder li {
+    background: white;
+    margin: 20px auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 600px;
+}
+
+#events-placeholder h3 {
+    margin: 0px;
+}
+
+#events-placeholder input {
+    margin-bottom: 20px;
+}
+
+#events-placeholder textarea {
+    -webkit-appearance: none;
+    appearance: none;
+
+    margin: 10px 0px;
+    padding: 15px;
+    width: 80%;
+    border-radius: 0px;
+    border: 2px solid #7f8c8d;
+    background: white;
+    font-size: 14px;
+    height: 100px;
+}
