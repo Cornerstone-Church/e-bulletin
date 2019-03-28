@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="/styles/style.css?1.1">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Set up Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/5.9.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.9.0/firebase-firestore.js"></script>
+    <script src="http://ref.cag.org/scripts/zalem_firebase.js"></script>
+
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-134329219-1"></script>
     <script>
@@ -21,7 +26,7 @@
 
 </head>
 
-<body onload="checkDay()">
+<body onload="checkDay(); getData();">
     <!-- Happening Today -->
     <section id="happening-today">
         <div class="banner">
@@ -285,63 +290,14 @@
             <img src="/ref/portal_images/events.jpg">
             <h1>Announcments</h1>
         </div>
+
+        <!-- Will be generated from Firebase -->
         <ul id="announcment-section">
-            <!--
-                - When creating dates. Make sure you use the <div class="date"> and format like this:
-                "March 2nd | 9:00am - 12:00pm"
-                -->
-            <li>
-                <h2>Resurrection Experience</h2>
-                <div class="date">April 12th-14th | 7:00pm - 9:00pm</div>
-                <p>
-                    Join us and bring a friend for an immersive and
-                    interactive experience of the power of the Resurrection. Step into a
-                    modern-day interpretation of Jerusalem as you are guided through the
-                    events that led up to Christ’s Resurrection.
-                </p>
-            </li>
-            <li>
-                <h2>Pretty Pretty Outreach</h2>
-                <div class="date">April 6th | 10:00am - 12:00pm</div>
-                <p>
-                    Join us in showing God’s love to women in
-                    our local community. The event is free to the community and will include
-                    haircuts, manicures, makeovers, refreshments, and special giveaways. We
-                    invite ladies & men age 14 & older to sign up to serve online & attend the info
-                    meeting <b>TODAY</b> after both services in the Community Room.
-                </p>
-            </li>
-            <li>
-                <h2>Summer Camps</h2>
-                <div class="date">KIDS: July 8th-12th</div>
-                <div class="date">YOUTH: June 17th-21st</div>
-                <p>
-                    ALIVE Kids and Fusion Youth Ministries are excited for this year’s summer camps.
-                    Kids Camp is July 8-12 for students 8 years old through 5th grade. Youth Camp is
-                    June 17-21 for students in 6th-12th grade. These week-long camps include
-                    awesome activities, team games, and powerful services at the Potomac Pine
-                    Creek Camp in Gore, VA. A non-refundable $100 deposit is due by Sunday,
-                    March 31. You do not want your students to miss this, so sign up now at
-                    <a href="http://cag.org/events">cag.org/events</a>.
-                </p>
-            </li>
-            <li>
-                <h2>Employment Opportunity</h2>
-                <p>
-                    Cornerstone Christian Academy is in the process of looking for our next principal. Candidates
-                    applying must have a Master's degree pertinent to Education, substantial experience in teaching &
-                    administration, and be (or willing to become) a member of Cornerstone Church. Please contact Dr.
-                    Mark at <a href="mailto:drmark@cag.org">drmark@cag.org</a> to apply or to submit nominees.
-                </p>
-            </li>
-            <li>
-                <h2>Resurrection Weekend Services</h2>
-                <div class="date">Good Friday: April 19th | 7:00pm (Worship & Communion)</div>
-                <div class="date">Resurrection Celebration Services: April 20th | 5:00pm & April 21st | 7:30am | 9:00am | 11:00am</div>
-            </li>
+            
         </ul>
     </section>
     <script src="/scripts/happening_now.js"></script>
+    <script src="./scripts/announcments_firebase.js"></script>
 </body>
 
 </html>
