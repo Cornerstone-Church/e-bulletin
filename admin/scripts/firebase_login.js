@@ -27,7 +27,7 @@ function signIn(email, password, errorElement) {
 
 function signOut() {
     auth.signOut().then(() => {
-        alert("User is signed out");
+        // Do nothing on sign out
     }).catch((error) => {
         console.error("There was a problem login out the user: " + error);
     })
