@@ -49,7 +49,7 @@ db.get().then((querySnapshot) => {
     orderAnnouncements();
     // Gernerate each announcement
     annoucements.forEach((item) => {
-        generateEditElement(item[0], item[1], item[2], item[3], item[4]);
+        generateEditElement(item[0], item[2], item[1], item[3], item[4]);
     });
     // Place all generated objects in the HTML
     placeElements();
@@ -72,7 +72,7 @@ function placeElements() {
 }
 
 /* Builds the structure and elements for each announcment */
-function generateEditElement(id, title, index, date, description) {
+function generateEditElement(id, index, title, date, description) {
     // Define all elements
     // Wrapper Element
     var annElement = document.createElement("li");
@@ -98,19 +98,31 @@ function generateEditElement(id, title, index, date, description) {
     descriptionField.setAttribute("placeholder", "Description");
     descriptionField.setAttribute("id", "elementDescription");
 
+    var deleteButton = document.createElement("button");
+    deleteButton.innerHTML = "Delete";
+    deleteButton.setAttribute("onclick", "deleteAnn('" + id + "')");
+
     // Assign data to elements
     // Title
     titleElement.innerHTML = "Title";
-    titleField.value = title;
+    if (title != undefined) {
+        titleField.value = title;
+    }
     // Order
     orderElement.innerHTML = "Order";
-    orderField.value = index;
+    if (index != undefined) {
+        orderField.value = index;
+    }
     // Date
     dateElement.innerHTML = "Date";
-    dateField.value = date;
+    if (date != undefined) {
+        dateField.value = date;
+    }
     // Description
     descriptionElement.innerHTML = "Description";
-    descriptionField.value = description;
+    if (description != undefined) {
+        descriptionField.value = description;
+    }
 
     // Build Tree
     annElement.appendChild(titleElement);
@@ -121,11 +133,13 @@ function generateEditElement(id, title, index, date, description) {
     annElement.appendChild(dateField);
     annElement.appendChild(descriptionElement);
     annElement.appendChild(descriptionField);
+    annElement.appendChild(deleteButton);
 
     // Add to event list
     formattedAnnouncements.push(annElement);
 }
 
+/* Check for any changes and applies the updates to the server */
 function updateAnnouncements() {
     // var announcementElements = document.querySelectorAll(".announcements");
 
@@ -189,7 +203,46 @@ function updateAnnouncements() {
     });
 }
 
+/* Creates a new announcement and stores it in the database */
+function createAnnouncement() {
+    // Create a new sort number
+    var newSortNumber = annoucements.length;
+    // Make sure number is not 0 when creating from scratch
+    if (newSortNumber == 0) {
+        newSortNumber++;
+    }
+    // Create temporary announcement
+    var newAnnouncement = [undefined, undefined, newSortNumber, undefined, undefined];
+    db.add({
+        // Assign the sort order
+        sort: newAnnouncement[2],
+    }).then((docRef) => {
+        console.log("Document Created");
+        // Assign the ID to the new Announcement
+        newAnnouncement[0] = docRef.id;
+        // Add new announcement to array
+        annoucements.push(newAnnouncement);
+        // Generate the HTML element
+        generateEditElement(newAnnouncement[0], newAnnouncement[2], newAnnouncement[1], newAnnouncement[3], newAnnouncement[4]);
+        // Re-draw
+        placeElements();
+    }).catch((error) => {
+        console.error("Unable to create document: " + error);
+    })
+}
 
+function deleteAnn(element) {
+    if (confirm("Are you sure you want to delete?")) {
+        db.doc(element).delete().then(() => {
+            console.log("Finished deleting document");
+            location.reload();
+        }).catch((error) => {
+            console.error("Unable to remove document: " + error);
+        })
+    }
+}
+
+/* Push changes to the database */
 function pushToDatabase(id, localTitle, localOrder, localDate, localDescription) {
     var statusElement = document.getElementById("update-status");
     db.doc(id).set({
@@ -199,7 +252,14 @@ function pushToDatabase(id, localTitle, localOrder, localDate, localDescription)
         description: localDescription
     }).then(() => {
         console.log("Document written!");
+        // Update the status
         statusElement.innerHTML = "Updated"
+
+        // Reload the preview
+        var iframe = document.getElementById("events-preview");
+        iframe.src = iframe.src;
+
+        // Clear the status
         setTimeout(() => {
             statusElement.innerHTML = "";
         },
