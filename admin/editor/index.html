@@ -1,42 +1,56 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-    <head>
-        <title>E-Bulletin Editor | Cornerstone Church</title>
-        <meta charset="uft8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="/styles/style.css">
-        <link rel="stylesheet" href="../styles/admin_style.css">
 
-        <!-- Firebase Scripts -->
-        <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-app.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-auth.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-firestore.js"></script>
-        <script src="http://ref.cag.org/scripts/zalem_firebase.js"></script>
-        <script src="../scripts/firebase_login.js"></script>
-        <!-- Check if user is authenticated -->
-        <script>
-            auth.onAuthStateChanged((user) => {
-                if (!user) {
-                    window.open('/admin/', '_self');
-                }
-            });
-        </script>
-    </head>
-    <body>
-        <header>
+<head>
+    <title>E-Bulletin Editor | Cornerstone Church</title>
+    <meta charset="uft8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="../styles/admin_style.css">
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-firestore.js"></script>
+    <script src="http://ref.cag.org/scripts/zalem_firebase.js"></script>
+    <script src="../scripts/firebase_login.js"></script>
+    <!-- Check if user is authenticated -->
+    <script>
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.open('/admin/', '_self');
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <header>
+        <div class="center">
             <h1>Announcments</h1>
-            <button onclick="signOut()">Sign Out</button>
-        </header>
-        <section>
+            <a href="#signout" onclick="signOut()">Sign Out</a>
+            <!-- <button onclick="signOut()">Sign Out</button> -->
+        </div>
+    </header>
+    <div id="grid-container">
+        <section id="editor">
             <!-- Script will pull content from server and place it in here -->
             <ul id="events-placeholder"></ul>
+            <div class="center">
+                <button onclick="createAnnouncement()">Create Announcement</button>
+            </div>
         </section>
-        <span style="display:block; height: 100px;"></span>
-        <footer id="events-footer">
-            <h2 id="update-status"></h2>
-            <button id="update-button" onclick="updateAnnouncements()">Update</button>
-        </footer>
+        <iframe id="events-preview" src="../../events"></iframe>
+    </div>
+    <!-- Add spacing so footer dosnt cover content -->
+    <span style="display:block; height: 150px;"></span>
+    <footer id="events-footer">
+        <h2 id="update-status"></h2>
+        <div class="comment">(All updates are live)</div>
+        <button id="update-button" onclick="updateAnnouncements()">Update</button>
+    </footer>
 
-        <script src="../scripts/editor_generator.js"></script>
-    </body>
+    <script src="../scripts/editor_generator.js"></script>
+</body>
+
 </html>
