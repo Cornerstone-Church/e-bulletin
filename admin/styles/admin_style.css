@@ -1,0 +1,178 @@
+:root {
+    --theme-text: #34495e;
+}
+
+body {
+    background: #f5f5f5;
+    color: var(--theme-text);
+}
+
+input {
+    -webkit-appearance: none;
+    appearance: none;
+
+    margin: 10px 0px;
+    padding: 15px;
+    width: 80%;
+    border-radius: 0px;
+    border: 2px solid var(--theme-text);
+    background: white;
+    font-size: 14px;
+    color: var(--theme-text);
+}
+
+input:focus {
+    border-color: #7f8c8d;
+    outline: none;
+}
+
+button {
+    margin: 10px 20px;
+    padding: 15px;
+    border-radius: 0px;
+    border: 2px solid var(--theme-text);
+    background: none;
+    font-size: 14px;
+
+    color: var(--theme-text);
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+.comment {
+    font-style: italic;
+    color: #7f8c8d;
+}
+
+#admin-wrapper {
+    position: relative;
+    height: 100vh;
+}
+
+#admin-login {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    height: auto;
+    width: 80%;
+    max-width: 500px;
+    background: white;
+
+    text-align: center;
+}
+
+#admin-login img {
+    margin-top: 40px;
+    width: 200px;
+}
+
+#admin-login h1 {
+    margin-top: 0px;
+    font-size: 25px;
+}
+
+#admin-login button {
+    margin-bottom: 40px;
+    width: 80%;
+}
+
+#admin-login #error-message {
+    color: #e74c3c;
+}
+
+.center {
+    text-align: center;
+}
+
+/* Logged in Events */
+#events-footer {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    padding: 10px 0px;
+    background: white;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+#events-footer button {
+    width: 80%;
+    max-width: 400px;
+    font-size: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+    border-width: 3px;
+}
+
+#events-footer #update-status {
+    color: green;
+    margin: 0px;
+}
+
+#events-placeholder {
+    text-align: center;
+}
+
+#events-placeholder li {
+    background: white;
+    margin: 20px auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 600px;
+}
+
+#events-placeholder h3 {
+    margin: 0px;
+}
+
+#events-placeholder input {
+    margin-bottom: 20px;
+}
+
+#events-placeholder textarea {
+    -webkit-appearance: none;
+    appearance: none;
+
+    margin: 10px 0px;
+    padding: 15px;
+    width: 80%;
+    border-radius: 0px;
+    border: 2px solid var(--theme-text);
+    background: white;
+    font-size: 14px;
+    height: 100px;
+}
+
+#events-placeholder textarea:focus {
+    border-color: #7f8c8d;
+    outline: none;
+}
+
+#grid-container {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
+#events-preview {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    margin-top: 20px;
+    width: 90%;
+    height: 80vh;
+
+    border: 10px solid white;
+}
+
+@media only screen and (max-width: 800px) {
+    #grid-container {
+        display: inline;
+    }
+
+    #events-preview {
+        display: none;
+    }
+}
