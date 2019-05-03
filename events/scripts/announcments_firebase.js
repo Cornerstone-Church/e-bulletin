@@ -13,7 +13,6 @@ var db = firestore.collection("announcements");
 // Will cal the generateElement function with data recieved.
 
 function getData() {
-    console.log("Called")
     db.get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var data = doc.data();

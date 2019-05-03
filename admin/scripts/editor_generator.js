@@ -47,10 +47,6 @@ db.get().then((querySnapshot) => {
     })
     // Put the announcements in order bassed on their sort number
     orderAnnouncements();
-    // Gernerate each announcement
-    annoucements.forEach((item) => {
-        generateEditElement(item[0], item[2], item[1], item[3], item[4]);
-    });
     // Place all generated objects in the HTML
     placeElements();
 });
@@ -61,14 +57,33 @@ function orderAnnouncements() {
     annoucements = [];
     unOrdered.forEach((item) => {
         annoucements[item[2]] = item;
-    })
+    });
 }
 
 /* Draws elements to the screen */
 function placeElements() {
+    // Gernerate each announcement
+    annoucements.forEach((item) => {
+        generateEditElement(item[0], item[2], item[1], item[3], item[4]);
+    });
+
+    // Format the Announcements
     formattedAnnouncements.forEach((element) => {
         eventList.appendChild(element);
     })
+}
+
+/* Clears all the elements on the screen */
+function clearElements() {
+    var elements = document.querySelectorAll("#events-placeholder li");
+
+    // Remove each html element
+    elements.forEach((element) => {
+        element.parentNode.removeChild(element);
+    });
+
+    // Clear the formatted announcements
+    formattedAnnouncements = [];
 }
 
 /* Builds the structure and elements for each announcment */
@@ -77,16 +92,17 @@ function generateEditElement(id, index, title, date, description) {
     // Wrapper Element
     var annElement = document.createElement("li");
     annElement.setAttribute("id", id);
+
     // Child Elements
     var titleElement = document.createElement("h3");
     var titleField = document.createElement("input");
     titleField.setAttribute("placeholder", "Example Announcement");
     titleField.setAttribute("id", "elementTitle");
 
-    var orderElement = document.createElement("h3");
-    var orderField = document.createElement("input");
-    orderField.setAttribute("type", "number");
-    orderField.setAttribute("id", "elementOrder");
+    // var orderElement = document.createElement("h3");
+    // var orderField = document.createElement("input");
+    // orderField.setAttribute("type", "number");
+    // orderField.setAttribute("id", "elementOrder");
 
     var dateElement = document.createElement("h3");
     var dateField = document.createElement("input");
@@ -101,17 +117,21 @@ function generateEditElement(id, index, title, date, description) {
     var deleteButton = document.createElement("button");
     deleteButton.innerHTML = "Delete";
     deleteButton.setAttribute("onclick", "deleteAnn('" + id + "')");
+    deleteButton.setAttribute("style", "color: red;");
+
+    var moveUpButton = document.createElement("button");
+    moveUpButton.innerHTML = "Move Up";
+    moveUpButton.setAttribute("onclick", "moveAnnouncement('up', '" + id + "', " + index + ")");
+
+    var moveDownButton = document.createElement("button");
+    moveDownButton.innerHTML = "Move Down";
+    moveDownButton.setAttribute("onclick", "moveAnnouncement('down', '" + id + "', " + index + ")");
 
     // Assign data to elements
     // Title
     titleElement.innerHTML = "Title";
     if (title != undefined) {
         titleField.value = title;
-    }
-    // Order
-    orderElement.innerHTML = "Order";
-    if (index != undefined) {
-        orderField.value = index;
     }
     // Date
     dateElement.innerHTML = "Date";
@@ -127,79 +147,35 @@ function generateEditElement(id, index, title, date, description) {
     // Build Tree
     annElement.appendChild(titleElement);
     annElement.appendChild(titleField);
-    annElement.appendChild(orderElement);
-    annElement.appendChild(orderField);
+    // annElement.appendChild(orderElement);
+    // annElement.appendChild(orderField);
     annElement.appendChild(dateElement);
     annElement.appendChild(dateField);
     annElement.appendChild(descriptionElement);
     annElement.appendChild(descriptionField);
     annElement.appendChild(deleteButton);
+    annElement.appendChild(moveUpButton);
+    annElement.appendChild(moveDownButton);
 
     // Add to event list
     formattedAnnouncements.push(annElement);
 }
 
-/* Check for any changes and applies the updates to the server */
+/* Takes all changes and saves it to the array */
 function updateAnnouncements() {
-    // var announcementElements = document.querySelectorAll(".announcements");
+    var currentIndex = 0;
+    var editorElementId = document.querySelectorAll("#events-placeholder li");
+    var inputTitle = document.querySelectorAll("#elementTitle");
+    var inputDate = document.querySelectorAll("#elementDate");
+    var inputDescription = document.querySelectorAll("#elementDescription");
 
-    // console.log(announcementElements);
-    annoucements.forEach((item) => {
-        var newData = [] //0=Has been changed, 1=Title, 2=Order, 3=Date, 4=Description
-        newData[0] = false;
-
-        var element = document.getElementById(item[0]);
-        var elementTitle = element.querySelector("#elementTitle");
-        var elementOrder = element.querySelector("#elementOrder");
-        var elementDate = element.querySelector("#elementDate");
-        var elementDescription = element.querySelector("#elementDescription");
-
-        // Check to see what needs to be changed
-        // Title
-        if (elementTitle.value != item[1]) {
-            console.log("Title for " + item[0] + " is different.");
-            // Update element
-            newData[1] = elementTitle.value;
-            // Update status that it has been updated
-            newData[0] = true;
-        } else {
-            // If no new data, just copy from the existing array
-            newData[1] = item[1];
+    annoucements.forEach((element) => {
+        if (element[0] == editorElementId[currentIndex].id) {
+            element[1] = inputTitle[currentIndex].value;
+            element[3] = inputDate[currentIndex].value;
+            element[4] = inputDescription[currentIndex].value;
         }
-
-        // Order
-        if (elementOrder.value != item[2]) {
-            console.log("Order for " + item[0] + " is different.");
-            newData[2] = elementOrder.value;
-            newData[0] = true
-        } else {
-            newData[2] = item[2];
-        }
-
-        // Date
-        if (elementDate.value != item[3]) {
-            console.log("Date for " + item[0] + " is different.");
-            newData[3] = elementDate.value;
-            newData[0] = true
-        } else {
-            newData[3] = item[3];
-        }
-
-        // Description
-        if (elementDescription.value != item[4]) {
-            console.log("Description for " + item[0] + " is different.");
-            newData[4] = elementDescription.value;
-            newData[0] = true
-        } else {
-            newData[4] = item[4];
-        }
-
-        // Check if there were any changes and push
-        if (newData[0]) {
-            pushToDatabase(item[0], newData[1], newData[2], newData[3], newData[4]);
-        } else {
-            console.log("No changes for " + item[0]);
-        }
+        currentIndex++;
     });
 }
 
@@ -231,6 +207,62 @@ function createAnnouncement() {
     })
 }
 
+/* Change the order of the annoncements */
+function moveAnnouncement(direction, id, index) {
+    updateAnnouncements();
+    if (direction == "up") {
+        // Make sure element is not the top element
+        if (index != 1) {
+            var firstElement = annoucements[index];
+            var secondElement = annoucements[index - 1];
+
+            // Remove the two elements
+            annoucements.splice(index - 1, 2);
+
+            // Swap the index numbers
+            firstElement[2] = index - 1;
+            secondElement[2] = index;
+
+            // Add elements back in
+            annoucements.push(firstElement);
+            annoucements.push(secondElement);
+
+            // Order the announcements
+            orderAnnouncements();
+
+            clearElements();
+            placeElements();
+        }
+
+    } else if (direction == "down") {
+        // Make sure its not the bottom element
+        if (index != annoucements.length) {
+            var firstElement = annoucements[index];
+            var secondElement = annoucements[index + 1];
+
+            // Remove the two elements
+            annoucements.splice(index, 2);
+
+            // Swap the index numbers
+            firstElement[2] = index + 1;
+            secondElement[2] = index;
+
+            // Add elements back in
+            annoucements.push(firstElement);
+            annoucements.push(secondElement);
+
+            // Order the announcements
+            orderAnnouncements();
+
+            clearElements();
+            placeElements();
+        }
+    } else {
+        console.error("Invalid direction to move announcement.");
+    }
+}
+
+/* Deletes an announcement */
 function deleteAnn(element) {
     if (confirm("Are you sure you want to delete?")) {
         db.doc(element).delete().then(() => {
@@ -242,9 +274,17 @@ function deleteAnn(element) {
     }
 }
 
+function publishAnnouncements() {
+    updateAnnouncements();
+    annoucements.forEach((element) => {
+        pushToDatabase(element[0], element[1], element[2], element[3], element[4]);
+    })
+}
+
 /* Push changes to the database */
 function pushToDatabase(id, localTitle, localOrder, localDate, localDescription) {
     var statusElement = document.getElementById("update-status");
+    
     db.doc(id).set({
         title: localTitle,
         sort: localOrder,
@@ -262,8 +302,7 @@ function pushToDatabase(id, localTitle, localOrder, localDate, localDescription)
         // Clear the status
         setTimeout(() => {
             statusElement.innerHTML = "";
-        },
-            3000);
+        }, 3000);
     }).catch((error) => {
         console.error("There was a problem writing to the document: " + error);
     })
