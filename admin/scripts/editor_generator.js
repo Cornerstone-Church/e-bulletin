@@ -62,12 +62,18 @@ function orderAnnouncements() {
 
 /* Draws elements to the screen */
 function placeElements() {
+    // Clear formatted announcements
+    formattedAnnouncements = [];
+    // Clear the UI List
+    eventList.innerHTML = '';
+
     // Gernerate each announcement
     annoucements.forEach((item) => {
         generateEditElement(item[0], item[2], item[1], item[3], item[4]);
     });
 
-    // Format the Announcements
+
+    // Apply the formatted announcement as a child to the event list
     formattedAnnouncements.forEach((element) => {
         eventList.appendChild(element);
     })
@@ -98,11 +104,6 @@ function generateEditElement(id, index, title, date, description) {
     var titleField = document.createElement("input");
     titleField.setAttribute("placeholder", "Example Announcement");
     titleField.setAttribute("id", "elementTitle");
-
-    // var orderElement = document.createElement("h3");
-    // var orderField = document.createElement("input");
-    // orderField.setAttribute("type", "number");
-    // orderField.setAttribute("id", "elementOrder");
 
     var dateElement = document.createElement("h3");
     var dateField = document.createElement("input");
@@ -147,8 +148,6 @@ function generateEditElement(id, index, title, date, description) {
     // Build Tree
     annElement.appendChild(titleElement);
     annElement.appendChild(titleField);
-    // annElement.appendChild(orderElement);
-    // annElement.appendChild(orderField);
     annElement.appendChild(dateElement);
     annElement.appendChild(dateField);
     annElement.appendChild(descriptionElement);
@@ -264,7 +263,7 @@ function moveAnnouncement(direction, id, index) {
 
 /* Deletes an announcement */
 function deleteAnn(element) {
-    if (confirm("Are you sure you want to delete?")) {
+    if (confirm("Are you sure you want to delete? This action will be applied live to the bulletin.")) {
         db.doc(element).delete().then(() => {
             console.log("Finished deleting document");
             location.reload();
