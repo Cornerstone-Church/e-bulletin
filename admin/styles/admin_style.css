@@ -137,6 +137,10 @@ button:hover {
     font-size: 20px;
 }
 
+#events-placeholder h1:hover {
+    cursor: pointer;
+}
+
 #events-placeholder .icon {
     height: 20px;
     margin: 5px;

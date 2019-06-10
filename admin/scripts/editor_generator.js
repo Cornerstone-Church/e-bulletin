@@ -11,12 +11,13 @@ var db = firestore.collection("announcements-beta");
     4 => Description
 */
 var annoucements = [
-    { id: 'FakeID', order: 0, title: 'Fake Title', subtitle: 'Some Date', description: 'Fake Description' },
+    { id: 'FakeID', order: 0, title: 'Fake Title', subtitle: 'Some Date', buttonLink: '', description: 'Fake Description' },
 ];
 // An array that holds all formatted announcements
 var formattedAnnouncements = [];
 
 var isNewAnn = false;
+var editingId = '';
 // Document Elements
 var eventList = document.querySelector("#events-placeholder");
 
@@ -57,7 +58,7 @@ discardButton.addEventListener('mousedown', () => {
 
 saveButton.addEventListener('mousedown', () => {
     var isValid = true;
-    var tempAnn = { id: '', order: 0, title: '', subtitle: '', description: '' };
+    var tempAnn = { id: '', order: 0, title: '', subtitle: '', buttonLink: '', description: '' };
 
     if (titleInput.value == '') {
         isValid = false;
@@ -73,13 +74,23 @@ saveButton.addEventListener('mousedown', () => {
             tempAnn.order = annoucements.length;
             tempAnn.title = titleInput.value;
             tempAnn.subtitle = subtitleInput.value;
+            tempAnn.buttonLink = buttonLink.value;
             tempAnn.description = descriptionInput.value;
 
             annoucements.push(tempAnn);
             closeEditWindow(true);
             updateDisplay();
+        } else {
+            annoucements.forEach((e) => {
+                if (e.id == editingId) {
+                    e.title = titleInput.value;
+                    e.subtitle = subtitleInput.value;
+                    e.description = descriptionInput.value;
+                }
+            });
+            closeEditWindow(true);
+            updateDisplay();
         }
-        console.log(tempAnn);
     }
 });
 
@@ -105,6 +116,7 @@ function createListItem(id, title) {
     trashElement.setAttribute('class', 'icon');
 
     // Assign on click elements
+    titleElement.setAttribute('onclick', "editWindow('" + id + "')");
     upElement.setAttribute('onclick', "moveAnnouncement('" + id + "', 'up')");
     downElement.setAttribute('onclick', "moveAnnouncement('" + id + "', 'down')");
     trashElement.setAttribute('onclick', "deleteAnnouncement('" + id + "')");
@@ -156,13 +168,17 @@ function moveAnnouncement(id, direction) {
 
             // Move the announcement
             for (i = 0; i < annoucements.length; i++) {
-                if (id == annoucements[i].id) {
-                    movedAnn = annoucements[i];
-                    beforeAnn = annoucements[i - 1];
-
-                    annoucements[i - 1] = movedAnn;
-                    annoucements[i] = beforeAnn;
-                    break;
+                // Prevents the first item from being moved up
+                if (i != 0) {
+                    // Query
+                    if (id == annoucements[i].id) {
+                        movedAnn = annoucements[i];
+                        beforeAnn = annoucements[i - 1];
+    
+                        annoucements[i - 1] = movedAnn;
+                        annoucements[i] = beforeAnn;
+                        break;
+                    }
                 }
             }
 
@@ -178,16 +194,21 @@ function moveAnnouncement(id, direction) {
             var movedAnn;
             var afterAnn;
 
+
             // Move the announcement
             for (i = 0; i < annoucements.length; i++) {
-                if (id == annoucements[i].id) {
-                    movedAnn = annoucements[i];
-                    afterAnn = annoucements[i + 1];
-
-                    annoucements[i + 1] = movedAnn;
-                    annoucements[i] = afterAnn;
-
-                    break;
+                // Prevents the element from being moved down if last
+                if (i != (annoucements.length - 1)) {
+                    // Query
+                    if (id == annoucements[i].id) {
+                        movedAnn = annoucements[i];
+                        afterAnn = annoucements[i + 1];
+    
+                        annoucements[i + 1] = movedAnn;
+                        annoucements[i] = afterAnn;
+    
+                        break;
+                    }
                 }
             }
 
@@ -222,10 +243,49 @@ function deleteAnnouncement(id) {
 function editWindow(id) {
     if (id == null) {
         // New Announcement
+
+        // Dissable Button Link
+        checkbox.checked = false;
+        buttonLink.disabled = true;
+        buttonLink.classList.add('dissabled');
+
         eewWrapper.style.display = 'block';
         isNewAnn = true;
     } else {
         // Editor
+        isNewAnn = false;
+        var editAnn;
+        annoucements.forEach((ann) => {
+            if (ann.id == id) {
+                editingId = ann.id;
+                editAnn = ann;
+            }
+        });
+
+        titleInput.value = editAnn.title;
+        subtitleInput.value = editAnn.subtitle;
+
+        // Check to see if there is a button link
+        // If so fill it in and enable it
+        if (editAnn.buttonLink != '') {
+            checkbox.checked = true;
+
+            // Enable button Link
+            buttonLink.classList.remove('dissabled');
+            buttonLink.disabled = false;
+            buttonLink.value = editAnn.buttonLink;
+        } else {
+            // Dissable Button Link
+            checkbox.checked = false;
+            buttonLink.disabled = true;
+            buttonLink.classList.add('dissabled');
+        }
+
+
+
+        descriptionInput.value = editAnn.description;
+
+        eewWrapper.style.display = 'block';
     }
 }
 
@@ -266,6 +326,10 @@ function makeid(length) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+}
+
+function updateServer() {
+    
 }
 
 // Fetch data from server
