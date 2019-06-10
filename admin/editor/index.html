@@ -46,11 +46,36 @@
         <section id="editor">
             <!-- Script will pull content from server and place it in here -->
             <ul id="events-placeholder"></ul>
+
             <div class="center">
                 <button onclick="createAnnouncement()">Create Announcement</button>
             </div>
         </section>
         <iframe id="events-preview" src="../../events/"></iframe>
+    </div>
+    <div class="center">
+        <div id="eew-wrapper">
+            <div id="eew">
+                <div id="eew-close-button"><b>X</b></div>
+                <div id="eew-form-wrapper">
+                    <div class="input-text">Title</div>
+                    <input id="title-input">
+                    <div class="input-text">Sub Title (Optional)</div>
+                    <input id="subtitle-input">
+                    <div class="input-text">Button Link</div>
+                    <div id="checkbox-wrapper">
+                        <input id="checkbox-button" class="checkbox" type="checkbox">
+                        <input class="dissabled" id="button-link" disabled>
+                    </div>
+                    <div class="input-text">Description</div>
+                    <textarea id="description-input"></textarea>
+                    <div class="center">
+                        <button id="discard-button">Discard</button>
+                        <button id="save-button">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- Add spacing so footer dosnt cover content -->
     <span style="display:block; height: 150px;"></span>

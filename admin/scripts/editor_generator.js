@@ -1,308 +1,300 @@
 // Firestore variables
 const firestore = firebase.firestore();
-var db = firestore.collection("announcements");
+var db = firestore.collection("announcements-beta");
 
 /* 
     Index:
     0 => ID
-    1 => Title
-    2 => Order
-    3 => Date
+    1 => Order
+    2 => Title
+    3 => Subtitle
     4 => Description
 */
-var annoucements = [];
-
+var annoucements = [
+    { id: 'FakeID', order: 0, title: 'Fake Title', subtitle: 'Some Date', description: 'Fake Description' },
+];
 // An array that holds all formatted announcements
 var formattedAnnouncements = [];
 
-// Placeholder element
+var isNewAnn = false;
+// Document Elements
 var eventList = document.querySelector("#events-placeholder");
 
-// Fetch data from server
-db.get().then((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-        var document = [];
-        var data = doc.data();
-        var id = doc.id;
-        var title = "";
-        var order = "";
-        var date = "";
-        var description = "";
+// Editor
+var eewWrapper = document.getElementById('eew-wrapper');
+var closeButton = document.getElementById('eew-close-button')
+var checkbox = document.getElementById('checkbox-button');
+var discardButton = document.getElementById('discard-button');
+var saveButton = document.getElementById('save-button');
 
-        // Check to make sure everything is filled out. If not leave blank
-        if (data.title != undefined) {
-            title = data.title;
-        }
-        if (data.sort != undefined) {
-            order = data.sort;
-        }
-        if (data.date != undefined) {
-            date = data.date;
-        }
-        if (data.description != undefined) {
-            description = data.description;
-        }
-        document = [id, title, order, date, description];
-        annoucements.push(document);
-    })
-    // Put the announcements in order bassed on their sort number
-    orderAnnouncements();
-    // Place all generated objects in the HTML
-    placeElements();
+var titleInput = document.getElementById('title-input');
+var subtitleInput = document.getElementById('subtitle-input');
+var buttonLink = document.getElementById('button-link');
+var descriptionInput = document.getElementById('description-input');
+
+
+// ON LOAD CODE
+updateDisplay();
+
+// Listeners
+checkbox.addEventListener('mousedown', (event) => {
+    if (!checkbox.checked) {
+        buttonLink.classList.remove('dissabled');
+        buttonLink.toggleAttribute('disabled');
+    } else {
+        buttonLink.classList.add('dissabled');
+        buttonLink.toggleAttribute('disabled');
+    }
 });
 
-/* Orders all the announcements bassed on their sort index */
-function orderAnnouncements() {
-    var unOrdered = annoucements;
-    annoucements = [];
-    unOrdered.forEach((item) => {
-        annoucements[item[2]] = item;
-    });
-}
+closeButton.addEventListener('mousedown', () => {
+    closeEditWindow(false);
+});
 
-/* Draws elements to the screen */
-function placeElements() {
-    // Clear formatted announcements
-    formattedAnnouncements = [];
-    // Clear the UI List
-    eventList.innerHTML = '';
+discardButton.addEventListener('mousedown', () => {
+    closeEditWindow(false);
+});
 
-    // Gernerate each announcement
-    annoucements.forEach((item) => {
-        generateEditElement(item[0], item[2], item[1], item[3], item[4]);
-    });
+saveButton.addEventListener('mousedown', () => {
+    var isValid = true;
+    var tempAnn = { id: '', order: 0, title: '', subtitle: '', description: '' };
 
-
-    // Apply the formatted announcement as a child to the event list
-    formattedAnnouncements.forEach((element) => {
-        eventList.appendChild(element);
-    })
-}
-
-/* Clears all the elements on the screen */
-function clearElements() {
-    var elements = document.querySelectorAll("#events-placeholder li");
-
-    // Remove each html element
-    elements.forEach((element) => {
-        element.parentNode.removeChild(element);
-    });
-
-    // Clear the formatted announcements
-    formattedAnnouncements = [];
-}
-
-/* Builds the structure and elements for each announcment */
-function generateEditElement(id, index, title, date, description) {
-    // Define all elements
-    // Wrapper Element
-    var annElement = document.createElement("li");
-    annElement.setAttribute("id", id);
-
-    // Child Elements
-    var titleElement = document.createElement("h3");
-    var titleField = document.createElement("input");
-    titleField.setAttribute("placeholder", "Example Announcement");
-    titleField.setAttribute("id", "elementTitle");
-
-    var dateElement = document.createElement("h3");
-    var dateField = document.createElement("input");
-    dateField.setAttribute("placeholder", "April 1st | 7:00pm - 8:00pm");
-    dateField.setAttribute("id", "elementDate");
-
-    var descriptionElement = document.createElement("h3");
-    var descriptionField = document.createElement("textarea");
-    descriptionField.setAttribute("placeholder", "Description");
-    descriptionField.setAttribute("id", "elementDescription");
-
-    var deleteButton = document.createElement("button");
-    deleteButton.innerHTML = "Delete";
-    deleteButton.setAttribute("onclick", "deleteAnn('" + id + "')");
-    deleteButton.setAttribute("style", "color: red;");
-
-    var moveUpButton = document.createElement("button");
-    moveUpButton.innerHTML = "Move Up";
-    moveUpButton.setAttribute("onclick", "moveAnnouncement('up', '" + id + "', " + index + ")");
-
-    var moveDownButton = document.createElement("button");
-    moveDownButton.innerHTML = "Move Down";
-    moveDownButton.setAttribute("onclick", "moveAnnouncement('down', '" + id + "', " + index + ")");
-
-    // Assign data to elements
-    // Title
-    titleElement.innerHTML = "Title";
-    if (title != undefined) {
-        titleField.value = title;
-    }
-    // Date
-    dateElement.innerHTML = "Date";
-    if (date != undefined) {
-        dateField.value = date;
-    }
-    // Description
-    descriptionElement.innerHTML = "Description";
-    if (description != undefined) {
-        descriptionField.value = description;
+    if (titleInput.value == '') {
+        isValid = false;
+        alert('Please enter a title.');
+    } else if (descriptionInput.value == '') {
+        isValid = false;
+        alert('Please enter a description.');
     }
 
-    // Build Tree
-    annElement.appendChild(titleElement);
-    annElement.appendChild(titleField);
-    annElement.appendChild(dateElement);
-    annElement.appendChild(dateField);
-    annElement.appendChild(descriptionElement);
-    annElement.appendChild(descriptionField);
-    annElement.appendChild(deleteButton);
-    annElement.appendChild(moveUpButton);
-    annElement.appendChild(moveDownButton);
+    if (isValid) {
+        if (isNewAnn) {
+            tempAnn.id = makeid(15);
+            tempAnn.order = annoucements.length;
+            tempAnn.title = titleInput.value;
+            tempAnn.subtitle = subtitleInput.value;
+            tempAnn.description = descriptionInput.value;
 
-    // Add to event list
-    formattedAnnouncements.push(annElement);
-}
-
-/* Takes all changes and saves it to the array */
-function updateAnnouncements() {
-    var currentIndex = 0;
-    var editorElementId = document.querySelectorAll("#events-placeholder li");
-    var inputTitle = document.querySelectorAll("#elementTitle");
-    var inputDate = document.querySelectorAll("#elementDate");
-    var inputDescription = document.querySelectorAll("#elementDescription");
-
-    annoucements.forEach((element) => {
-        if (element[0] == editorElementId[currentIndex].id) {
-            element[1] = inputTitle[currentIndex].value;
-            element[3] = inputDate[currentIndex].value;
-            element[4] = inputDescription[currentIndex].value;
+            annoucements.push(tempAnn);
+            closeEditWindow(true);
+            updateDisplay();
         }
-        currentIndex++;
-    });
+        console.log(tempAnn);
+    }
+});
+
+
+
+// Will create a list item and return it as a <li>
+function createListItem(id, title) {
+    var listItem = document.createElement('li');
+    var titleElement = document.createElement('h1');
+    var upElement = document.createElement('img');
+    var downElement = document.createElement('img');
+    var trashElement = document.createElement('img');
+
+    // Assign the item ID to the actual list item
+    listItem.setAttribute('id', id);
+
+    // Set the title
+    titleElement.innerHTML = title;
+
+    // Give up, down, and trash the class 'icon'
+    upElement.setAttribute('class', 'icon');
+    downElement.setAttribute('class', 'icon');
+    trashElement.setAttribute('class', 'icon');
+
+    // Assign on click elements
+    upElement.setAttribute('onclick', "moveAnnouncement('" + id + "', 'up')");
+    downElement.setAttribute('onclick', "moveAnnouncement('" + id + "', 'down')");
+    trashElement.setAttribute('onclick', "deleteAnnouncement('" + id + "')");
+
+    // Assign image file
+    upElement.setAttribute('src', '/ref/events_page/admin/up-icon.png');
+    downElement.setAttribute('src', '/ref/events_page/admin/down-icon.png');
+    trashElement.setAttribute('src', '/ref/events_page/admin/trashcan-icon.png');
+
+    // Add elements to list item
+    listItem.appendChild(titleElement);
+    listItem.appendChild(upElement);
+    listItem.appendChild(downElement);
+    listItem.appendChild(trashElement);
+
+    // Return finished list item
+    return listItem;
 }
 
-/* Creates a new announcement and stores it in the database */
 function createAnnouncement() {
-    // Create a new sort number
-    var newSortNumber = annoucements.length;
-    // Make sure number is not 0 when creating from scratch
-    if (newSortNumber == 0) {
-        newSortNumber++;
-    }
-    // Create temporary announcement
-    var newAnnouncement = [undefined, undefined, newSortNumber, undefined, undefined];
-    db.add({
-        // Assign the sort order
-        sort: newAnnouncement[2],
-    }).then((docRef) => {
-        console.log("Document Created");
-        // Assign the ID to the new Announcement
-        newAnnouncement[0] = docRef.id;
-        // Add new announcement to array
-        annoucements.push(newAnnouncement);
-        // Generate the HTML element
-        generateEditElement(newAnnouncement[0], newAnnouncement[2], newAnnouncement[1], newAnnouncement[3], newAnnouncement[4]);
-        // Re-draw
-        placeElements();
-    }).catch((error) => {
-        console.error("Unable to create document: " + error);
-    })
+
+    editWindow();
+
+    // TEMPORARY CODE!
+    // Will launch editor then will save to the array
+    // var newAnnouncement = {
+    //     id: 'New ID',
+    //     title: 'New Announcement',
+    //     order: annoucements.length,
+    //     date: '',
+    //     description: '',
+    // }
+
+    // annoucements.push(newAnnouncement);
+
+    // alert('Created Announcement');
+    // updateDisplay();
 }
 
-/* Change the order of the annoncements */
-function moveAnnouncement(direction, id, index) {
-    updateAnnouncements();
-    if (direction == "up") {
-        // Make sure element is not the top element
-        if (index != 1) {
-            var firstElement = annoucements[index];
-            var secondElement = annoucements[index - 1];
+function openAnnouncement(id) {
+    alert('Opening: ' + id);
+}
 
-            // Remove the two elements
-            annoucements.splice(index - 1, 2);
+function moveAnnouncement(id, direction) {
+    switch (direction) {
+        case 'up': {
+            var movedAnn;
+            var beforeAnn;
 
-            // Swap the index numbers
-            firstElement[2] = index - 1;
-            secondElement[2] = index;
+            // Move the announcement
+            for (i = 0; i < annoucements.length; i++) {
+                if (id == annoucements[i].id) {
+                    movedAnn = annoucements[i];
+                    beforeAnn = annoucements[i - 1];
 
-            // Add elements back in
-            annoucements.push(firstElement);
-            annoucements.push(secondElement);
+                    annoucements[i - 1] = movedAnn;
+                    annoucements[i] = beforeAnn;
+                    break;
+                }
+            }
 
-            // Order the announcements
-            orderAnnouncements();
+            // Update the order variable
+            for (i = 0; i < annoucements.length; i++) {
+                annoucements[i].order = i;
+            }
 
-            clearElements();
-            placeElements();
+            updateDisplay();
+            break;
         }
+        case 'down': {
+            var movedAnn;
+            var afterAnn;
 
-    } else if (direction == "down") {
-        // Make sure its not the bottom element
-        if (index != annoucements.length) {
-            var firstElement = annoucements[index];
-            var secondElement = annoucements[index + 1];
+            // Move the announcement
+            for (i = 0; i < annoucements.length; i++) {
+                if (id == annoucements[i].id) {
+                    movedAnn = annoucements[i];
+                    afterAnn = annoucements[i + 1];
 
-            // Remove the two elements
-            annoucements.splice(index, 2);
+                    annoucements[i + 1] = movedAnn;
+                    annoucements[i] = afterAnn;
 
-            // Swap the index numbers
-            firstElement[2] = index + 1;
-            secondElement[2] = index;
+                    break;
+                }
+            }
 
-            // Add elements back in
-            annoucements.push(firstElement);
-            annoucements.push(secondElement);
+            // Update the order variable
+            for (i = 0; i < annoucements.length; i++) {
+                annoucements[i].order = i;
+            }
 
-            // Order the announcements
-            orderAnnouncements();
-
-            clearElements();
-            placeElements();
+            updateDisplay();
+            break;
         }
+        default: {
+            alert('Unknown direction to move announcememnt. Please contact developer with details.');
+        }
+    }
+}
+
+function deleteAnnouncement(id) {
+    var message = confirm("Are you sure you want to delete?");
+
+    // Parse announcement and when the ID matches remove the item at that index
+    if (message) {
+        for (i = 0; i < annoucements.length; i++) {
+            if (annoucements[i].id == id) {
+                annoucements.splice(i, 1);
+            }
+        }
+        updateDisplay();
+    }
+}
+
+function editWindow(id) {
+    if (id == null) {
+        // New Announcement
+        eewWrapper.style.display = 'block';
+        isNewAnn = true;
     } else {
-        console.error("Invalid direction to move announcement.");
+        // Editor
     }
 }
 
-/* Deletes an announcement */
-function deleteAnn(element) {
-    if (confirm("Are you sure you want to delete? This action will be applied live to the bulletin.")) {
-        db.doc(element).delete().then(() => {
-            console.log("Finished deleting document");
-            location.reload();
-        }).catch((error) => {
-            console.error("Unable to remove document: " + error);
-        })
+function closeEditWindow(saved) {
+    if (saved) {
+        eewWrapper.style.display = 'none';
+        titleInput.value = '';
+        subtitleInput.value = '';
+        checkbox.checked = false;
+        buttonLink.value = '';
+        descriptionInput.value = '';
+    } else {
+        if (confirm('Changes will not be saved. Are you sure?')) {
+            eewWrapper.style.display = 'none';
+            titleInput.value = '';
+            subtitleInput.value = '';
+            checkbox.checked = false;
+            buttonLink.value = '';
+            descriptionInput.value = '';
+        }
     }
 }
 
-function publishAnnouncements() {
-    updateAnnouncements();
+function updateDisplay() {
+    // Clear the display
+    eventList.innerHTML = "";
+    // Draw announcements to screen
     annoucements.forEach((element) => {
-        pushToDatabase(element[0], element[1], element[2], element[3], element[4]);
+        eventList.appendChild(createListItem(element.id, element.title));
     })
 }
 
-/* Push changes to the database */
-function pushToDatabase(id, localTitle, localOrder, localDate, localDescription) {
-    var statusElement = document.getElementById("update-status");
-    
-    db.doc(id).set({
-        title: localTitle,
-        sort: localOrder,
-        date: localDate,
-        description: localDescription
-    }).then(() => {
-        console.log("Document written!");
-        // Update the status
-        statusElement.innerHTML = "Updated"
-
-        // Reload the preview
-        var iframe = document.getElementById("events-preview");
-        iframe.src = iframe.src;
-
-        // Clear the status
-        setTimeout(() => {
-            statusElement.innerHTML = "";
-        }, 3000);
-    }).catch((error) => {
-        console.error("There was a problem writing to the document: " + error);
-    })
+function makeid(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }
+
+// Fetch data from server
+// function getData() {
+//     db.get().then((querySnapshot) => {
+//         querySnapshot.forEach((doc) => {
+//             var document = [];
+//             var data = doc.data();
+//             var id = doc.id;
+//             var title = "";
+//             var order = "";
+//             var date = "";
+//             var description = "";
+
+//             // Check to make sure everything is filled out. If not leave blank
+//             if (data.title != undefined) {
+//                 title = data.title;
+//             }
+//             if (data.sort != undefined) {
+//                 order = data.sort;
+//             }
+//             if (data.date != undefined) {
+//                 date = data.date;
+//             }
+//             if (data.description != undefined) {
+//                 description = data.description;
+//             }
+//             document = [id, title, order, date, description];
+//             annoucements.push(document);
+//         })
+//     });
+// }
