@@ -8,7 +8,7 @@ var announcementList = document.querySelector("#announcment-section");
 var announcementsOrdered = [];
 
 // Finds the database to read
-var db = firestore.collection("announcements-beta");
+var db = firestore.collection("announcements");
 // Pull all docs in the database and reads each one.
 // Will cal the generateElement function with data recieved.
 

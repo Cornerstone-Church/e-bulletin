@@ -6,7 +6,7 @@
 
 // Firestore variables
 const firestore = firebase.firestore();
-var db = firestore.collection("announcements-beta");
+var db = firestore.collection("announcements");
 var statusDelay = 3000; // In Milliseconds
 
 // Variable for all the announcements
