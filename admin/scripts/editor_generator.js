@@ -1,3 +1,9 @@
+/**
+ * @author: Silent Sonata
+ * @version: 1.0
+ * @description: Script that manages and allows the user to edit the E-Bulletin.
+ */
+
 // Firestore variables
 const firestore = firebase.firestore();
 var db = firestore.collection("announcements-beta");
@@ -46,17 +52,22 @@ checkbox.addEventListener('mousedown', (event) => {
 });
 
 closeButton.addEventListener('mousedown', () => {
+    // Close window saying changes are not saved
     closeEditWindow(false);
 });
 
 discardButton.addEventListener('mousedown', () => {
+    // Close window saying changes are not saved
     closeEditWindow(false);
 });
 
 saveButton.addEventListener('mousedown', () => {
+    // Bool that stays true unless form is not valid
     var isValid = true;
+
     var tempAnn = { id: '', order: 0, title: '', subtitle: '', buttonLink: '', description: '' };
 
+    // Validators
     if (titleInput.value == '') {
         isValid = false;
         alert('Please enter a title.');
@@ -65,8 +76,10 @@ saveButton.addEventListener('mousedown', () => {
         alert('Please enter a description.');
     }
 
+    // If valid is true
     if (isValid) {
         if (isNewAnn) {
+            // If the editor is creating a new announcement
             tempAnn.id = makeid(15);
             tempAnn.order = annoucements.length;
             tempAnn.title = titleInput.value;
@@ -76,8 +89,11 @@ saveButton.addEventListener('mousedown', () => {
 
             annoucements.push(tempAnn);
             closeEditWindow(true);
+
+            // Update viewport
             updateDisplay();
         } else {
+            // Editing an existing announcement
             annoucements.forEach((e) => {
                 if (e.id == editingId) {
                     e.title = titleInput.value;
@@ -85,7 +101,9 @@ saveButton.addEventListener('mousedown', () => {
                     e.description = descriptionInput.value;
                 }
             });
+            // Close window stating changes are saved
             closeEditWindow(true);
+            // Update viewport
             updateDisplay();
         }
     }
@@ -96,7 +114,10 @@ updateButton.addEventListener('mousedown', () => {
 })
 
 
-// Will create a list item and return it as a <li>
+/** Will create a list item and return it as a <li>
+ * @param {String} id - The ID of the announcement
+ * @param {String} title - The title of the item
+ */
 function createListItem(id, title) {
     var listItem = document.createElement('li');
     var titleElement = document.createElement('h1');
@@ -136,18 +157,23 @@ function createListItem(id, title) {
     return listItem;
 }
 
+/** Called to create a new announcement */
 function createAnnouncement() {
     editWindow();
 }
 
-function openAnnouncement(id) {
-    alert('Opening: ' + id);
-}
-
+/** Change the order of each announcement
+ * Accepts the id of the announcement to move and the direction of it
+ * @param {String} id - Announcement ID
+ * @param {String} direction - The direction of the move. (up/down)
+ */
 function moveAnnouncement(id, direction) {
     switch (direction) {
+        // Moving up
         case 'up': {
+            // Store the moving announcement
             var movedAnn;
+            // Store the announcment above it
             var beforeAnn;
 
             // Move the announcement
@@ -156,9 +182,11 @@ function moveAnnouncement(id, direction) {
                 if (i != 0) {
                     // Query
                     if (id == annoucements[i].id) {
+                        // Assign the real ann to temporary ones
                         movedAnn = annoucements[i];
                         beforeAnn = annoucements[i - 1];
 
+                        // Swap their positions
                         annoucements[i - 1] = movedAnn;
                         annoucements[i] = beforeAnn;
                         break;
@@ -166,18 +194,21 @@ function moveAnnouncement(id, direction) {
                 }
             }
 
-            // Update the order variable
+            // Re-calculate the order variable in each announcement (Not sure if we use this still)
             for (i = 0; i < annoucements.length; i++) {
                 annoucements[i].order = i;
             }
 
+            // Redraw viewport
             updateDisplay();
             break;
         }
+
+        // Moving Down
         case 'down': {
+            // Temporary Assignmnets
             var movedAnn;
             var afterAnn;
-
 
             // Move the announcement
             for (i = 0; i < annoucements.length; i++) {
@@ -185,9 +216,11 @@ function moveAnnouncement(id, direction) {
                 if (i != (annoucements.length - 1)) {
                     // Query
                     if (id == annoucements[i].id) {
+                        // Assign to temporary variables
                         movedAnn = annoucements[i];
                         afterAnn = annoucements[i + 1];
 
+                        // Swap ann positions
                         annoucements[i + 1] = movedAnn;
                         annoucements[i] = afterAnn;
 
@@ -196,20 +229,25 @@ function moveAnnouncement(id, direction) {
                 }
             }
 
-            // Update the order variable
+            // Re-calculate the order variable in each ann
             for (i = 0; i < annoucements.length; i++) {
                 annoucements[i].order = i;
             }
 
+            // Redraw viewport
             updateDisplay();
             break;
         }
+        // Called if the direction is anything else
         default: {
             alert('Unknown direction to move announcememnt. Please contact developer with details.');
         }
     }
 }
 
+/** Removes the announcemnt of the given id 
+ * @param {String} id - ID of the Announcement to remove
+ */
 function deleteAnnouncement(id) {
     var message = confirm("Are you sure you want to delete?");
 
@@ -220,10 +258,15 @@ function deleteAnnouncement(id) {
                 annoucements.splice(i, 1);
             }
         }
+        // Redraw Viewport
         updateDisplay();
     }
 }
 
+/** Open edit window
+ * If the @id is empty then it will create a new announcement
+ * @param {String} id - The id of the ann to edit
+ */
 function editWindow(id) {
     if (id == null) {
         // New Announcement
@@ -233,23 +276,31 @@ function editWindow(id) {
         buttonLink.disabled = true;
         buttonLink.classList.add('dissabled');
 
+        // Show window
         eewWrapper.style.display = 'block';
+        // Sets save button to new announcement mode
         isNewAnn = true;
 
         // All definitions are in the Save button listener
     } else {
         // Editor
+        // Sets save button to edit mode
         isNewAnn = false;
+        // Variable to hold the modified ann
         var editAnn;
+        // Query till ann is found with matching ID
         annoucements.forEach((ann) => {
             if (ann.id == id) {
+                // Assign Ann and ID to the editAnn
                 editingId = ann.id;
                 editAnn = ann;
             }
         });
 
+        // Fill in the exisiting values to the input fields
         titleInput.value = editAnn.title;
         subtitleInput.value = editAnn.subtitle;
+        descriptionInput.value = editAnn.description;
 
         // Check to see if there is a button link
         // If so fill it in and enable it
@@ -267,14 +318,16 @@ function editWindow(id) {
             buttonLink.classList.add('dissabled');
         }
 
-
-
-        descriptionInput.value = editAnn.description;
-
+        // Display the edit window
         eewWrapper.style.display = 'block';
     }
 }
 
+
+/** Closes the edit window
+ * 
+ * @param {bool} saved - Booliean that says if the edit is saved or not
+ */
 function closeEditWindow(saved) {
     if (saved) {
         eewWrapper.style.display = 'none';
@@ -295,6 +348,7 @@ function closeEditWindow(saved) {
     }
 }
 
+/** Updates the viewport display */
 function updateDisplay() {
     // Clear the display
     eventList.innerHTML = "";
@@ -304,6 +358,7 @@ function updateDisplay() {
     })
 }
 
+/** Generates a random ID */
 function makeid(length) {
     var result = '';
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -314,35 +369,46 @@ function makeid(length) {
     return result;
 }
 
+/** Clears and uploads changes to the server */
 function updateServer() {
     db.get().then((querySnapshot) => {
+        // Remove all announcements from server
         querySnapshot.forEach((doc) => {
             db.doc(doc.id).delete().then(() => {
                 console.log('Removing old document.');
             })
         });
-
+        
+        // Add all announcements to the server
         annoucements.forEach((e) => {
             db.doc(e.id).set({
                 title: e.title,
                 subtitle: e.subtitle,
                 order: e.order,
                 buttonLink: e.buttonLink,
-                description: e.description
+                description: e.description,
             })
+            // Update the display
             statusMessage('Updated');
             iframePreview.src = iframePreview.src;
         });
+
+        // When there are no announcements still update the display
+        if (annoucements.length == 0) {
+            statusMessage('Updated');
+            iframePreview.src = iframePreview.src;
+        }
     });
 
 }
 
+/** Download and update local information with servers */
 function getServer() {
     db.get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var data = doc.data();
             var singleAnn = {
-                id: data.id,
+                id: doc.id,
                 order: data.order,
                 title: data.title,
                 subtitle: data.subtitle,
@@ -363,34 +429,3 @@ function statusMessage(message) {
         updateStatus.innerHTML = '';
     }, statusDelay);
 }
-
-// Fetch data from server
-// function getData() {
-//     db.get().then((querySnapshot) => {
-//         querySnapshot.forEach((doc) => {
-//             var document = [];
-//             var data = doc.data();
-//             var id = doc.id;
-//             var title = "";
-//             var order = "";
-//             var date = "";
-//             var description = "";
-
-//             // Check to make sure everything is filled out. If not leave blank
-//             if (data.title != undefined) {
-//                 title = data.title;
-//             }
-//             if (data.sort != undefined) {
-//                 order = data.sort;
-//             }
-//             if (data.date != undefined) {
-//                 date = data.date;
-//             }
-//             if (data.description != undefined) {
-//                 description = data.description;
-//             }
-//             document = [id, title, order, date, description];
-//             annoucements.push(document);
-//         })
-//     });
-// }
