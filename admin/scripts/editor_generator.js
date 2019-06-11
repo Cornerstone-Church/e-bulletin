@@ -3,22 +3,15 @@ const firestore = firebase.firestore();
 var db = firestore.collection("announcements-beta");
 var statusDelay = 3000; // In Milliseconds
 
-/* 
-    Index:
-    0 => ID
-    1 => Order
-    2 => Title
-    3 => Subtitle
-    4 => Description
-*/
-var annoucements = [
-    { id: 'FakeID', order: 0, title: 'Fake Title', subtitle: 'Some Date', buttonLink: '', description: 'Fake Description' },
-];
+// Variable for all the announcements
+var annoucements = [];
 // An array that holds all formatted announcements
 var formattedAnnouncements = [];
 
 var isNewAnn = false;
 var editingId = '';
+
+var iframePreview = document.getElementById('events-preview');
 
 // Document Elements
 var eventList = document.querySelector("#events-placeholder");
@@ -39,7 +32,7 @@ var descriptionInput = document.getElementById('description-input');
 
 
 // ON LOAD CODE
-updateDisplay();
+getServer();
 
 // Listeners
 checkbox.addEventListener('mousedown', (event) => {
@@ -165,7 +158,7 @@ function moveAnnouncement(id, direction) {
                     if (id == annoucements[i].id) {
                         movedAnn = annoucements[i];
                         beforeAnn = annoucements[i - 1];
-    
+
                         annoucements[i - 1] = movedAnn;
                         annoucements[i] = beforeAnn;
                         break;
@@ -194,10 +187,10 @@ function moveAnnouncement(id, direction) {
                     if (id == annoucements[i].id) {
                         movedAnn = annoucements[i];
                         afterAnn = annoucements[i + 1];
-    
+
                         annoucements[i + 1] = movedAnn;
                         annoucements[i] = afterAnn;
-    
+
                         break;
                     }
                 }
@@ -337,10 +330,30 @@ function updateServer() {
                 buttonLink: e.buttonLink,
                 description: e.description
             })
+            statusMessage('Updated');
+            iframePreview.src = iframePreview.src;
         });
-        statusMessage('Updated');
     });
 
+}
+
+function getServer() {
+    db.get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            var data = doc.data();
+            var singleAnn = {
+                id: data.id,
+                order: data.order,
+                title: data.title,
+                subtitle: data.subtitle,
+                buttonLink: data.buttonLink,
+                description: data.description,
+            }
+
+            annoucements.push(singleAnn);
+            updateDisplay();
+        })
+    })
 }
 
 // Displays a status message at the bottom of the screen
