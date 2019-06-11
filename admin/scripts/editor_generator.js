@@ -1,6 +1,7 @@
 // Firestore variables
 const firestore = firebase.firestore();
 var db = firestore.collection("announcements-beta");
+var statusDelay = 3000; // In Milliseconds
 
 /* 
     Index:
@@ -18,8 +19,11 @@ var formattedAnnouncements = [];
 
 var isNewAnn = false;
 var editingId = '';
+
 // Document Elements
 var eventList = document.querySelector("#events-placeholder");
+var updateStatus = document.getElementById('update-status');
+var updateButton = document.getElementById('update-button');
 
 // Editor
 var eewWrapper = document.getElementById('eew-wrapper');
@@ -94,6 +98,9 @@ saveButton.addEventListener('mousedown', () => {
     }
 });
 
+updateButton.addEventListener('mousedown', () => {
+    updateServer();
+})
 
 
 // Will create a list item and return it as a <li>
@@ -137,23 +144,7 @@ function createListItem(id, title) {
 }
 
 function createAnnouncement() {
-
     editWindow();
-
-    // TEMPORARY CODE!
-    // Will launch editor then will save to the array
-    // var newAnnouncement = {
-    //     id: 'New ID',
-    //     title: 'New Announcement',
-    //     order: annoucements.length,
-    //     date: '',
-    //     description: '',
-    // }
-
-    // annoucements.push(newAnnouncement);
-
-    // alert('Created Announcement');
-    // updateDisplay();
 }
 
 function openAnnouncement(id) {
@@ -251,6 +242,8 @@ function editWindow(id) {
 
         eewWrapper.style.display = 'block';
         isNewAnn = true;
+
+        // All definitions are in the Save button listener
     } else {
         // Editor
         isNewAnn = false;
@@ -329,7 +322,33 @@ function makeid(length) {
 }
 
 function updateServer() {
-    
+    db.get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            db.doc(doc.id).delete().then(() => {
+                console.log('Removing old document.');
+            })
+        });
+
+        annoucements.forEach((e) => {
+            db.doc(e.id).set({
+                title: e.title,
+                subtitle: e.subtitle,
+                order: e.order,
+                buttonLink: e.buttonLink,
+                description: e.description
+            })
+        });
+        statusMessage('Updated');
+    });
+
+}
+
+// Displays a status message at the bottom of the screen
+function statusMessage(message) {
+    updateStatus.innerHTML = message;
+    setTimeout(() => {
+        updateStatus.innerHTML = '';
+    }, statusDelay);
 }
 
 // Fetch data from server

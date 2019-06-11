@@ -16,23 +16,12 @@ function getData() {
     db.get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var data = doc.data();
-            var title = "";
-            var date = "";
-            var description = "";
-
-            // Check to make sure everything is filled out. If not leave blank
-            if (data.title != undefined) {
-                title = data.title;
-            }
-            if (data.date != undefined) {
-                date = data.date;
-            }
-            if (data.description != undefined) {
-                description = data.description;
-            }
+            var title = data.title;
+            var subtitle = data.subtitle;
+            var description = data.description;
 
             // Send to the generator to create the HTML layout
-            generateElement(title, date, description, data.sort);
+            generateElement(title, subtitle, description, data.order);
         }),
         // After all data is fetched draw it
         drawData();
@@ -48,27 +37,25 @@ function drawData() {
 
 
 // Generates the HTML layout for the announcment passed to it
-function generateElement(title, date, description, sort) {
+function generateElement(title, subtitle, description, sort) {
     // Define the elements to generate
     const listElement = document.createElement("li");
     const titleElement = document.createElement("h2");
-    const dateElement = document.createElement("div");
+    const subtitleElement = document.createElement("div");
     const descriptionElement = document.createElement("p");
 
     // Assign text to each element
     titleElement.innerHTML = title;
-    dateElement.innerHTML = date;
+    subtitleElement.innerHTML = subtitle;
     descriptionElement.innerHTML = description;
 
-    // Add date class to dateElement
-    dateElement.setAttribute("class", "date");
+    // Add subtitle class to subtitleElement
+    subtitleElement.setAttribute("class", "subtitle");
 
     // Set up list structure
     listElement.appendChild(titleElement);
-    listElement.appendChild(dateElement);
+    listElement.appendChild(subtitleElement);
     listElement.appendChild(descriptionElement)
 
-
-    var index = sort - 1;
-    announcementsOrdered[index] = listElement;
+    announcementsOrdered[sort] = listElement;
 }
