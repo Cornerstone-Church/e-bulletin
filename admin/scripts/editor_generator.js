@@ -381,27 +381,54 @@ function makeid(length) {
 /** Clears and uploads changes to the server */
 function updateServer() {
     db.get().then((querySnapshot) => {
-        // Remove all announcements from server
-        querySnapshot.forEach((doc) => {
-            db.doc(doc.id).delete().then(() => {
-                console.log('Removing old document.');
-            })
-        });
+        const existingAnn = querySnapshot.docs.length;
+        var currentRemovedAnn = 0;
 
-        // Add all announcements to the server
-        annoucements.forEach((e) => {
-            db.doc(e.id).set({
-                title: e.title,
-                subtitle: e.subtitle,
-                order: e.order,
-                buttonLabel: e.buttonLabel,
-                buttonLink: e.buttonLink,
-                description: e.description,
+        // If empty then only add otherwise remove all then add
+        if (existingAnn <= 0) {
+            // Add all announcements to the server
+            annoucements.forEach((e) => {
+                db.doc(e.id).set({
+                    title: e.title,
+                    subtitle: e.subtitle,
+                    order: e.order,
+                    buttonLabel: e.buttonLabel,
+                    buttonLink: e.buttonLink,
+                    description: e.description,
+                })
             })
+
             // Update the display
             statusMessage('Updated');
-            iframePreview.src = iframePreview.src;
-        });
+            reloadPreview();
+        } else {
+            // Remove all announcements from server
+            querySnapshot.forEach((doc) => {
+                db.doc(doc.id).delete().then(() => {
+                    currentRemovedAnn++;
+                    // Check to see if all documents are removed before adding
+                    if (currentRemovedAnn == existingAnn) {
+                        // Add all announcements to the server
+                        annoucements.forEach((e) => {
+                            db.doc(e.id).set({
+                                title: e.title,
+                                subtitle: e.subtitle,
+                                order: e.order,
+                                buttonLabel: e.buttonLabel,
+                                buttonLink: e.buttonLink,
+                                description: e.description,
+                            })
+                        })
+    
+                        // Update the display
+                        statusMessage('Updated');
+                        reloadPreview();
+                    }
+                })
+            });
+        }
+
+
 
         // When there are no announcements still update the display
         if (annoucements.length == 0) {
@@ -471,4 +498,10 @@ function enableButton(modifyCheckbox) {
     if (modifyCheckbox) {
         checkbox.checked = true;
     }
+}
+
+function reloadPreview() {
+    setTimeout(() => {
+        iframePreview.src = iframePreview.src;
+    }, 500);
 }
