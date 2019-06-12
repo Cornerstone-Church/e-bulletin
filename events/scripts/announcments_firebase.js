@@ -24,7 +24,13 @@ function getData() {
 
             // Send to the generator to create the HTML layout
             generateElement(title, subtitle, buttonLabel, buttonLink, description, data.order);
-        }),
+        });
+
+        if (querySnapshot.docs.length <= 0) {
+            console.log('No Announcements');
+            generateElement('There are no announcements', '', '', '', '', 0);
+        }
+
         // After all data is fetched draw it
         drawData();
     })
