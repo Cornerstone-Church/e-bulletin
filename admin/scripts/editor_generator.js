@@ -1,12 +1,12 @@
 /**
  * @author: Silent Sonata
- * @version: 1.0
+ * @version: 2.0-beta01
  * @description: Script that manages and allows the user to edit the E-Bulletin.
  */
 
 // Firestore variables
 const firestore = firebase.firestore();
-var db = firestore.collection("announcements");
+var db = firestore.collection("announcements-beta");
 var statusDelay = 3000; // In Milliseconds
 
 // Variable for all the announcements
