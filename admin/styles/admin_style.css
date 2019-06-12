@@ -122,13 +122,14 @@ button:hover {
 }
 
 #events-placeholder li {
+    position: relative;
     display: grid;
     grid-template-columns: auto 30px 30px 30px;
     background: white;
     margin: 5px auto;
     width: 80%;
     max-width: 600px;
-    height: 30px;
+    height: auto;
 }
 
 #events-placeholder h1 {
@@ -139,6 +140,15 @@ button:hover {
 
 #events-placeholder h1:hover {
     cursor: pointer;
+}
+
+#events-placeholder .list-button-wrapper {
+    position: absolute;
+    right: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 90px;
+    height: 30px;
 }
 
 #events-placeholder .icon {
@@ -199,8 +209,14 @@ button:hover {
 
 #eew #button-link {
     position: absolute;
+    left: 50%;
+    width: 50%;
+}
+
+#eew #button-label {
+    position: absolute;
     left: 10%;
-    width: 90%;
+    width: 30%;
 }
 
 #eew .dissabled {

@@ -11,10 +11,9 @@ var statusDelay = 3000; // In Milliseconds
 
 // Variable for all the announcements
 var annoucements = [];
-// An array that holds all formatted announcements
-var formattedAnnouncements = [];
 
 var isNewAnn = false;
+var hasButton = false;
 var editingId = '';
 
 var iframePreview = document.getElementById('events-preview');
@@ -33,6 +32,7 @@ var saveButton = document.getElementById('save-button');
 
 var titleInput = document.getElementById('title-input');
 var subtitleInput = document.getElementById('subtitle-input');
+var buttonLabel = document.getElementById('button-label');
 var buttonLink = document.getElementById('button-link');
 var descriptionInput = document.getElementById('description-input');
 
@@ -41,13 +41,11 @@ var descriptionInput = document.getElementById('description-input');
 getServer();
 
 // Listeners
-checkbox.addEventListener('mousedown', (event) => {
+checkbox.addEventListener('mouseup', (event) => {
     if (!checkbox.checked) {
-        buttonLink.classList.remove('dissabled');
-        buttonLink.toggleAttribute('disabled');
+        enableButton(false);
     } else {
-        buttonLink.classList.add('dissabled');
-        buttonLink.toggleAttribute('disabled');
+        disableButton(false);
     }
 });
 
@@ -65,12 +63,15 @@ saveButton.addEventListener('mousedown', () => {
     // Bool that stays true unless form is not valid
     var isValid = true;
 
-    var tempAnn = { id: '', order: 0, title: '', subtitle: '', buttonLink: '', description: '' };
+    var tempAnn = { id: '', order: 0, title: '', subtitle: '', buttonLabel: '', buttonLink: '', description: '' };
 
     // Validators
     if (titleInput.value == '') {
         isValid = false;
         alert('Please enter a title.');
+    } else if (hasButton && (buttonLabel.value == '' || buttonLink.value == '')) {
+        isValid = false;
+        alert('Please make sure you have a Button Label and Button Address.');
     } else if (descriptionInput.value == '') {
         isValid = false;
         alert('Please enter a description.');
@@ -84,7 +85,13 @@ saveButton.addEventListener('mousedown', () => {
             tempAnn.order = annoucements.length;
             tempAnn.title = titleInput.value;
             tempAnn.subtitle = subtitleInput.value;
-            tempAnn.buttonLink = buttonLink.value;
+
+            // If the button is enabled save it. Was saving when dissabled
+            if (hasButton) {
+                tempAnn.buttonLabel = buttonLabel.value;
+                tempAnn.buttonLink = buttonLink.value;
+            }
+
             tempAnn.description = descriptionInput.value;
 
             annoucements.push(tempAnn);
@@ -99,6 +106,10 @@ saveButton.addEventListener('mousedown', () => {
                     e.title = titleInput.value;
                     e.subtitle = subtitleInput.value;
                     e.description = descriptionInput.value;
+
+                    if (e.buttonLabel != '' || e.buttonLink != '') {
+                        enableButton(true);
+                    }
                 }
             });
             // Close window stating changes are saved
@@ -121,6 +132,7 @@ updateButton.addEventListener('mousedown', () => {
 function createListItem(id, title) {
     var listItem = document.createElement('li');
     var titleElement = document.createElement('h1');
+    var buttonWrapper = document.createElement('div');
     var upElement = document.createElement('img');
     var downElement = document.createElement('img');
     var trashElement = document.createElement('img');
@@ -132,6 +144,7 @@ function createListItem(id, title) {
     titleElement.innerHTML = title;
 
     // Give up, down, and trash the class 'icon'
+    buttonWrapper.setAttribute('class', 'list-button-wrapper');
     upElement.setAttribute('class', 'icon');
     downElement.setAttribute('class', 'icon');
     trashElement.setAttribute('class', 'icon');
@@ -149,9 +162,10 @@ function createListItem(id, title) {
 
     // Add elements to list item
     listItem.appendChild(titleElement);
-    listItem.appendChild(upElement);
-    listItem.appendChild(downElement);
-    listItem.appendChild(trashElement);
+    buttonWrapper.appendChild(upElement);
+    buttonWrapper.appendChild(downElement);
+    buttonWrapper.appendChild(trashElement);
+    listItem.appendChild(buttonWrapper);
 
     // Return finished list item
     return listItem;
@@ -272,9 +286,7 @@ function editWindow(id) {
         // New Announcement
 
         // Dissable Button Link
-        checkbox.checked = false;
-        buttonLink.disabled = true;
-        buttonLink.classList.add('dissabled');
+        disableButton(true);
 
         // Show window
         eewWrapper.style.display = 'block';
@@ -305,24 +317,19 @@ function editWindow(id) {
         // Check to see if there is a button link
         // If so fill it in and enable it
         if (editAnn.buttonLink != '') {
-            checkbox.checked = true;
-
             // Enable button Link
-            buttonLink.classList.remove('dissabled');
-            buttonLink.disabled = false;
+            enableButton(true);
+            buttonLabel.value = editAnn.buttonLabel;
             buttonLink.value = editAnn.buttonLink;
         } else {
             // Dissable Button Link
-            checkbox.checked = false;
-            buttonLink.disabled = true;
-            buttonLink.classList.add('dissabled');
+            disableButton(true);
         }
 
         // Display the edit window
         eewWrapper.style.display = 'block';
     }
 }
-
 
 /** Closes the edit window
  * 
@@ -334,6 +341,7 @@ function closeEditWindow(saved) {
         titleInput.value = '';
         subtitleInput.value = '';
         checkbox.checked = false;
+        buttonLabel.value = '';
         buttonLink.value = '';
         descriptionInput.value = '';
     } else {
@@ -342,6 +350,7 @@ function closeEditWindow(saved) {
             titleInput.value = '';
             subtitleInput.value = '';
             checkbox.checked = false;
+            buttonLabel.value = '';
             buttonLink.value = '';
             descriptionInput.value = '';
         }
@@ -378,13 +387,14 @@ function updateServer() {
                 console.log('Removing old document.');
             })
         });
-        
+
         // Add all announcements to the server
         annoucements.forEach((e) => {
             db.doc(e.id).set({
                 title: e.title,
                 subtitle: e.subtitle,
                 order: e.order,
+                buttonLabel: e.buttonLabel,
                 buttonLink: e.buttonLink,
                 description: e.description,
             })
@@ -412,6 +422,7 @@ function getServer() {
                 order: data.order,
                 title: data.title,
                 subtitle: data.subtitle,
+                buttonLabel: data.buttonLabel,
                 buttonLink: data.buttonLink,
                 description: data.description,
             }
@@ -422,10 +433,42 @@ function getServer() {
     })
 }
 
-// Displays a status message at the bottom of the screen
+/** Displays a status message at the bottom of the screen */
 function statusMessage(message) {
     updateStatus.innerHTML = message;
     setTimeout(() => {
         updateStatus.innerHTML = '';
     }, statusDelay);
+}
+
+/** Disables the button inputs
+ * 
+ * @param {Boolean} modifyCheckbox - True if checkbox should be changed
+ */
+function disableButton(modifyCheckbox) {
+    buttonLabel.disabled = true;
+    buttonLink.disabled = true;
+    buttonLabel.classList.add('dissabled');
+    buttonLink.classList.add('dissabled');
+    hasButton = false;
+
+    if (modifyCheckbox) {
+        checkbox.checked = false;
+    }
+}
+
+/** Enables the button inputs
+ * 
+ * @param {Boolean} modifyCheckbox - Set to true if checkbox should be changed.
+ */
+function enableButton(modifyCheckbox) {
+    buttonLabel.disabled = false;
+    buttonLink.disabled = false;
+    buttonLabel.classList.remove('dissabled');
+    buttonLink.classList.remove('dissabled');
+    hasButton = true;
+
+    if (modifyCheckbox) {
+        checkbox.checked = true;
+    }
 }

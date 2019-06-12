@@ -18,10 +18,12 @@ function getData() {
             var data = doc.data();
             var title = data.title;
             var subtitle = data.subtitle;
+            var buttonLabel = data.buttonLabel;
+            var buttonLink = data.buttonLink;
             var description = data.description;
 
             // Send to the generator to create the HTML layout
-            generateElement(title, subtitle, description, data.order);
+            generateElement(title, subtitle, buttonLabel, buttonLink, description, data.order);
         }),
         // After all data is fetched draw it
         drawData();
@@ -37,17 +39,33 @@ function drawData() {
 
 
 // Generates the HTML layout for the announcment passed to it
-function generateElement(title, subtitle, description, sort) {
+function generateElement(title, subtitle, buttonLabel, buttonLink, description, sort) {
+    var hasButton = false;
+
     // Define the elements to generate
     const listElement = document.createElement("li");
     const titleElement = document.createElement("h2");
     const subtitleElement = document.createElement("div");
+    const buttonWrapper = document.createElement('div');
+    buttonWrapper.setAttribute('class', 'center');
+    const buttonElement = document.createElement('a');
+    buttonElement.setAttribute('class', 'button');
     const descriptionElement = document.createElement("p");
 
     // Assign text to each element
     titleElement.innerHTML = title;
     subtitleElement.innerHTML = subtitle;
     descriptionElement.innerHTML = description;
+
+    // Check to see if there should be a button. If so create it
+    if (buttonLabel != '' && buttonLink != '') {
+        var label = document.createTextNode(buttonLabel);
+        buttonElement.appendChild(label);
+        buttonElement.setAttribute('href', buttonLink);
+        buttonElement.setAttribute('target', '_blank');
+
+        hasButton = true;
+    }
 
     // Add subtitle class to subtitleElement
     subtitleElement.setAttribute("class", "subtitle");
@@ -56,6 +74,12 @@ function generateElement(title, subtitle, description, sort) {
     listElement.appendChild(titleElement);
     listElement.appendChild(subtitleElement);
     listElement.appendChild(descriptionElement)
+
+    // If there is a button, Add it to the list
+    if (hasButton) {
+        buttonWrapper.appendChild(buttonElement);
+        listElement.appendChild(buttonWrapper);
+    }
 
     announcementsOrdered[sort] = listElement;
 }
