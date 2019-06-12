@@ -27,7 +27,6 @@ function getData() {
         });
 
         if (querySnapshot.docs.length <= 0) {
-            console.log('No Announcements');
             generateElement('There are no announcements', '', '', '', '', 0);
         }
 
