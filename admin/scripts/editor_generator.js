@@ -108,7 +108,8 @@ saveButton.addEventListener('mousedown', () => {
                     e.description = descriptionInput.value;
 
                     if (e.buttonLabel != '' || e.buttonLink != '') {
-                        enableButton(true);
+                        e.buttonLabel = buttonLabel.value;
+                        e.buttonLink = buttonLink.value;
                     }
                 }
             });
@@ -379,7 +380,7 @@ function makeid(length) {
 }
 
 /** Clears and uploads changes to the server */
-function updateServer() {
+function updateServer() { 
     db.get().then((querySnapshot) => {
         const existingAnn = querySnapshot.docs.length;
         var currentRemovedAnn = 0;
