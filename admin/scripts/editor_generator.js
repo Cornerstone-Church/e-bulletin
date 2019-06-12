@@ -384,6 +384,11 @@ function updateServer() {
         const existingAnn = querySnapshot.docs.length;
         var currentRemovedAnn = 0;
 
+        // Re-calculate the order variable in each announcement
+        for (i = 0; i < annoucements.length; i++) {
+            annoucements[i].order = i;
+        }
+
         // If empty then only add otherwise remove all then add
         if (existingAnn <= 0) {
             // Add all announcements to the server
