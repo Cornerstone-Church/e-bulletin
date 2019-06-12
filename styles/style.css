@@ -343,6 +343,10 @@ a:hover .overlay {
     margin: 80px 0px;
 }
 
+#announcment-section li:first-child {
+    margin-top: 0px;
+}
+
 .no-events {
     color: var(--theme-primary-color);
     text-align: center;
