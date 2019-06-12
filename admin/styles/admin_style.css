@@ -31,6 +31,11 @@ input:focus {
     outline: none;
 }
 
+textarea:focus {
+    border-color: #7f8c8d;
+    outline: none;
+}
+
 button {
     margin: 10px 20px;
     padding: 15px;
@@ -238,6 +243,11 @@ button:hover {
     font-size: 14px;
     color: var(--theme-text);
     resize: none;
+}
+
+#eew textarea:focus {
+    border-color: #7f8c8d;
+    outline: none;
 }
 
 #eew-close-button {
