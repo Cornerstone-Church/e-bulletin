@@ -442,6 +442,7 @@ function updateServer() {
 /** Download and update local information with servers */
 function getServer() {
     db.get().then((querySnapshot) => {
+        var fetchedAnn = annoucements;
         querySnapshot.forEach((doc) => {
             var data = doc.data();
             var singleAnn = {
@@ -454,9 +455,18 @@ function getServer() {
                 description: data.description,
             }
 
-            annoucements.push(singleAnn);
-            updateDisplay();
+            fetchedAnn.push(singleAnn);
         })
+        // Make sure announcements is empty
+        annoucements = [];
+
+        // Add the announcements in order
+        fetchedAnn.forEach((element) => {
+            annoucements[element.order] = element;
+        })
+
+        console.log(annoucements);
+        updateDisplay();
     })
 }
 
@@ -500,6 +510,7 @@ function enableButton(modifyCheckbox) {
     }
 }
 
+/** Reloads the preview window */
 function reloadPreview() {
     setTimeout(() => {
         iframePreview.src = iframePreview.src;
