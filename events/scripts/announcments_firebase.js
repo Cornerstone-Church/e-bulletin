@@ -78,13 +78,14 @@ function generateElement(title, subtitle, buttonLabel, buttonLink, description, 
     // Set up list structure
     listElement.appendChild(titleElement);
     listElement.appendChild(subtitleElement);
-    listElement.appendChild(descriptionElement)
-
+    
     // If there is a button, Add it to the list
     if (hasButton) {
         buttonWrapper.appendChild(buttonElement);
         listElement.appendChild(buttonWrapper);
     }
-
+    
+    listElement.appendChild(descriptionElement)
+    
     announcementsOrdered[sort] = listElement;
 }
