@@ -465,7 +465,6 @@ function getServer() {
             annoucements[element.order] = element;
         })
 
-        console.log(annoucements);
         updateDisplay();
     })
 }
