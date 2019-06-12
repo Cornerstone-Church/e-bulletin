@@ -8,7 +8,7 @@ var announcementList = document.querySelector("#announcment-section");
 var announcementsOrdered = [];
 
 // Finds the database to read
-var db = firestore.collection("announcements");
+var db = firestore.collection("announcements-beta");
 // Pull all docs in the database and reads each one.
 // Will cal the generateElement function with data recieved.
 
@@ -16,24 +16,20 @@ function getData() {
     db.get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             var data = doc.data();
-            var title = "";
-            var date = "";
-            var description = "";
-
-            // Check to make sure everything is filled out. If not leave blank
-            if (data.title != undefined) {
-                title = data.title;
-            }
-            if (data.date != undefined) {
-                date = data.date;
-            }
-            if (data.description != undefined) {
-                description = data.description;
-            }
+            var title = data.title;
+            var subtitle = data.subtitle;
+            var buttonLabel = data.buttonLabel;
+            var buttonLink = data.buttonLink;
+            var description = data.description;
 
             // Send to the generator to create the HTML layout
-            generateElement(title, date, description, data.sort);
-        }),
+            generateElement(title, subtitle, buttonLabel, buttonLink, description, data.order);
+        });
+
+        if (querySnapshot.docs.length <= 0) {
+            generateElement('There are no announcements', '', '', '', '', 0);
+        }
+
         // After all data is fetched draw it
         drawData();
     })
@@ -48,27 +44,47 @@ function drawData() {
 
 
 // Generates the HTML layout for the announcment passed to it
-function generateElement(title, date, description, sort) {
+function generateElement(title, subtitle, buttonLabel, buttonLink, description, sort) {
+    var hasButton = false;
+
     // Define the elements to generate
     const listElement = document.createElement("li");
     const titleElement = document.createElement("h2");
-    const dateElement = document.createElement("div");
+    const subtitleElement = document.createElement("div");
+    const buttonWrapper = document.createElement('div');
+    buttonWrapper.setAttribute('class', 'center');
+    const buttonElement = document.createElement('a');
+    buttonElement.setAttribute('class', 'button');
     const descriptionElement = document.createElement("p");
 
     // Assign text to each element
     titleElement.innerHTML = title;
-    dateElement.innerHTML = date;
+    subtitleElement.innerHTML = subtitle;
     descriptionElement.innerHTML = description;
 
-    // Add date class to dateElement
-    dateElement.setAttribute("class", "date");
+    // Check to see if there should be a button. If so create it
+    if (buttonLabel != '' && buttonLink != '') {
+        var label = document.createTextNode(buttonLabel);
+        buttonElement.appendChild(label);
+        buttonElement.setAttribute('href', buttonLink);
+        buttonElement.setAttribute('target', '_blank');
+
+        hasButton = true;
+    }
+
+    // Add subtitle class to subtitleElement
+    subtitleElement.setAttribute("class", "subtitle");
 
     // Set up list structure
     listElement.appendChild(titleElement);
-    listElement.appendChild(dateElement);
+    listElement.appendChild(subtitleElement);
     listElement.appendChild(descriptionElement)
 
+    // If there is a button, Add it to the list
+    if (hasButton) {
+        buttonWrapper.appendChild(buttonElement);
+        listElement.appendChild(buttonWrapper);
+    }
 
-    var index = sort - 1;
-    announcementsOrdered[index] = listElement;
+    announcementsOrdered[sort] = listElement;
 }
